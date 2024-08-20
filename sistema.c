@@ -145,11 +145,10 @@ int Selection(char *strings[], int count){
 
 void SignIn(){
 
-
   system("clear");
   PrintTitle();
 
-  char Name[50], Email[50], Password[50];
+  char Name[50], Email[50], Password[50], jsonData[250];
   int type, id;
 
   const char *filename = "accounts.json";
@@ -163,25 +162,117 @@ void SignIn(){
 
     charId = CountId(file);
     id = charId - '0';
+    id++;
     printf("%c\n", charId);
     printf("%d\n", id);
-    printf("Name: \n>");
-    scanf("%s", Name);
+
+    do{
+      printf("Name: \n>");
+      fgets(Name, sizeof(Name), stdin);
+
+      size_t len = strlen(Name);
+      if(len > 0 && Name[len-1] == '\n') {
+        Name[len-1] = '\0';
+      }
+
+      if(strchr(Name, ':') != NULL){
+        printf("Erro: Caractere ':' não permitido\n");
+      }
+      
+    }while (strchr(Name, ':') != NULL);
+
+    do{
+      printf("Email: \n>");
+      fgets(Email, sizeof(Email), stdin);
+
+      size_t len = strlen(Email);
+      if(len > 0 && Email[len-1] == '\n') {
+        Email[len-1] = '\0';
+      }
+
+      if(strchr(Email, ':') != NULL){
+        printf("Erro: Caractere ':' não permitido\n");
+      }
+      
+    }while (strchr(Email, ':') != NULL);
+
+    do{
+      printf("Password: \n>");
+      fgets(Password, sizeof(Password), stdin);
+
+      size_t len = strlen(Password);
+      if(len > 0 && Password[len-1] == '\n') {
+        Password[len-1] = '\0';
+      }
+
+      if(strchr(Password, ':') != NULL){
+        printf("Erro: Caractere ':' não permitido\n");
+      }
+      
+    }while (strchr(Password, ':') != NULL);
+
+    printf("Account Type:\n");
+    char *options[] = {"Secretary", "Teacher", 0};
+    type = Selection(options, 2);
+
+    snprintf(jsonData, sizeof(jsonData), "id:%d{\nName:%s;\nEmail:%s;\nPassword:%s;\nType:%d\n};\n", id, Name, Email, Password, type);
+    file = fopen(filename, "a");
+    fprintf(file, "%s", jsonData);
+    fclose(file);
 
   }else{
     id = 0;
 
-    printf("Name: \n>");
-    scanf("%s", Name);
+    do{
+      printf("Name: \n>");
+      fgets(Name, sizeof(Name), stdin);
 
-    printf("Email: \n>");
-    scanf("%s", Email);
+      size_t len = strlen(Name);
+      if(len > 0 && Name[len-1] == '\n') {
+        Name[len-1] = '\0';
+      }
 
-    printf("Password: \n>");
-    scanf("%s", Password);
+      if(strchr(Name, ':') != NULL){
+        printf("Erro: Caractere ':' não permitido\n");
+      }
+      
+    }while (strchr(Name, ':') != NULL);
 
-    char jsonData[250];
-    snprintf(jsonData, sizeof(jsonData), "id:%d{\nName:%s;\nEmail:%s;\nPassword:%s;\n};\n", id, Name, Email, Password);
+    do{
+      printf("Email: \n>");
+      fgets(Email, sizeof(Email), stdin);
+
+      size_t len = strlen(Email);
+      if(len > 0 && Email[len-1] == '\n') {
+        Email[len-1] = '\0';
+      }
+
+      if(strchr(Email, ':') != NULL){
+        printf("Erro: Caractere ':' não permitido\n");
+      }
+      
+    }while (strchr(Email, ':') != NULL);
+
+    do{
+      printf("Password: \n>");
+      fgets(Password, sizeof(Password), stdin);
+
+      size_t len = strlen(Password);
+      if(len > 0 && Password[len-1] == '\n') {
+        Password[len-1] = '\0';
+      }
+
+      if(strchr(Password, ':') != NULL){
+        printf("Erro: Caractere ':' não permitido\n");
+      }
+      
+    }while (strchr(Password, ':') != NULL);
+
+    printf("Account Type:\n");
+    char *options[] = {"Secretary", "Teacher", 0};
+    type = Selection(options, 2);
+
+    snprintf(jsonData, sizeof(jsonData), "id:%d{\nName:%s;\nEmail:%s;\nPassword:%s;\nType:%d\n};\n", id, Name, Email, Password, type);
     file = fopen(filename, "w");
     fprintf(file, "%s", jsonData);
     fclose(file);
@@ -205,8 +296,7 @@ int main(){
       printf("Logged!\n");
     } else {
       char *options[] = {"LogIn", "SignIn", "Exit"};
-      int count = sizeof(options) / sizeof(options[0]);
-      option = Selection(options, count);
+      option = Selection(options, 3);
 
       if(option == 0){ //LogIn
         break;
